@@ -31,20 +31,20 @@
 ### 数据预处理
 
 
-转化alpaca数据集为jsonl
+转化imdb数据集为jsonl
 
 ```bash
 python cover_alpaca2jsonl.py \
-    --data_path data/alpaca_data.json \
-    --save_path data/alpaca_data.jsonl \
+    --data_path data/imdb_data.json \
+    --save_path data/imdb_data.jsonl \
 ```
 
 tokenization
 
 ```bash
 python tokenize_dataset_rows.py \
-    --jsonl_path data/alpaca_data.jsonl \
-    --save_path data/alpaca \
+    --jsonl_path data/imdb_data.jsonl \
+    --save_path data/imdb \
     --max_seq_length 200 \ 
     --skip_overlength
 ```
@@ -57,14 +57,14 @@ python tokenize_dataset_rows.py \
 
 ```bash
 python finetune.py \
-    --dataset_path data/alpaca \
-    --lora_rank 8 \
-    --per_device_train_batch_size 6 \
+    --dataset_path data/imdb \
+    --lora_rank 8 \ # 神经元个数,推荐8,较小学习能力不强,较大提升无明显效果
+    --per_device_train_batch_size 6 \ # batch_size越大,显存要求越高,微调时间越短
     --gradient_accumulation_steps 1 \
-    --max_steps 52000 \
-    --save_steps 1000 \
-    --save_total_limit 2 \
-    --learning_rate 1e-4 \
+    --max_steps 52000 \ # steps 越高,模型对标注数据训练的次数越多
+    --save_steps 1000 \ # 每多少steps保存一次模型
+    --save_total_limit 2 \ 
+    --learning_rate 1e-4 \ # 一般不推荐更改默认学习率,如果loss收敛不稳定可尝试更改
     --fp16 \
     --remove_unused_columns false \
     --logging_steps 50 \
